@@ -2682,9 +2682,18 @@ func (repo *Repository) RecalculateAccesses() error {
 }
 
 func updateRepositoryDefault(e *xorm.Session, newDefault *CreateRepoOptionsLegacy) (err error) {
+	oldDefault := make([]*CreateRepoOptionsLegacy, 0)
+	if err = e.Where("name=?", newDefault.Name).Find(&oldDefault); err != nil {
+		return err
+	}
+	if len(oldDefault) > 0 {
+		_, err = e.Update(newDefault)
+		return err
+	}
 	if _, err = e.Insert(newDefault); err != nil {
 		return err
 	}
+
 	return nil
 }
 func getRepositoryDefault(e Engine) ([]*CreateRepoOptionsLegacy, error) {

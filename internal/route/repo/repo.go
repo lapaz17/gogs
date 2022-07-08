@@ -119,6 +119,17 @@ func CreatePost(c *context.Context, f form.CreateRepo) {
 		return
 	}
 
+	if f.SaveDefaultRepo {
+		db.UpdateRepositoryDefault(&db.CreateRepoOptionsLegacy{Name: "default",
+			Description: f.Description,
+			Gitignores:  f.Gitignores,
+			License:     f.License,
+			Readme:      f.Readme,
+			IsPrivate:   f.Private || conf.Repository.ForcePrivate,
+			IsUnlisted:  f.Unlisted,
+			AutoInit:    f.AutoInit})
+	}
+
 	repo, err := db.CreateRepository(c.User, ctxUser, db.CreateRepoOptionsLegacy{
 		Name:        f.RepoName,
 		Description: f.Description,
@@ -139,17 +150,6 @@ func CreatePost(c *context.Context, f form.CreateRepo) {
 		if errDelete := db.DeleteRepository(ctxUser.ID, repo.ID); errDelete != nil {
 			log.Error("DeleteRepository: %v", errDelete)
 		}
-	}
-
-	if f.SaveDefaultRepo {
-		db.UpdateRepositoryDefault(&db.CreateRepoOptionsLegacy{Name: f.RepoName,
-			Description: f.Description,
-			Gitignores:  f.Gitignores,
-			License:     f.License,
-			Readme:      f.Readme,
-			IsPrivate:   f.Private || conf.Repository.ForcePrivate,
-			IsUnlisted:  f.Unlisted,
-			AutoInit:    f.AutoInit})
 	}
 
 	handleCreateError(c, ctxUser, err, "CreatePost", CREATE, &f)
