@@ -108,6 +108,10 @@
 							<input class="hidden" name="auto_init" type="checkbox" tabindex="0" {{if .auto_init}}checked{{end}}>
 							<label>{{.i18n.Tr "repo.auto_init"}}</label>
 						</div>
+						<div class="ui checkbox" id="save-default-repo">
+							<input class="hidden" name="save_default_repo" type="checkbox" tabindex="0" {{if .save_default_repo}}checked{{end}}>
+							<label>{{.i18n.Tr "repo.save_default_repo"}}</label>
+						</div>
 					</div>
 
 					<div class="inline field">

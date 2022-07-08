@@ -929,7 +929,7 @@ func initRepoCommit(tmpPath string, sig *git.Signature) (err error) {
 }
 
 type CreateRepoOptionsLegacy struct {
-	Name        string
+	Name        string `xorm:"pk"`
 	Description string
 	Gitignores  string
 	License     string
@@ -2679,4 +2679,28 @@ func (repo *Repository) recalculateAccesses(e Engine) error {
 // RecalculateAccesses recalculates all accesses for repository.
 func (repo *Repository) RecalculateAccesses() error {
 	return repo.recalculateAccesses(x)
+}
+
+func updateRepositoryDefault(e *xorm.Session, newDefault *CreateRepoOptionsLegacy) (err error) {
+	if _, err = e.Insert(newDefault); err != nil {
+		return err
+	}
+	return nil
+}
+func getRepositoryDefault(e Engine) ([]*CreateRepoOptionsLegacy, error) {
+	defaults := make([]*CreateRepoOptionsLegacy, 0)
+	return defaults, e.Find(&defaults)
+}
+
+func UpdateRepositoryDefault(newDefault *CreateRepoOptionsLegacy) (err error) {
+	sess := x.NewSession()
+	defer sess.Close()
+	if err = sess.Begin(); err != nil {
+		return err
+	}
+
+	if err = updateRepositoryDefault(sess, newDefault); err != nil {
+		return fmt.Errorf("updateRepository: %v", err)
+	}
+	return sess.Commit()
 }

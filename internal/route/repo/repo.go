@@ -141,6 +141,17 @@ func CreatePost(c *context.Context, f form.CreateRepo) {
 		}
 	}
 
+	if f.SaveDefaultRepo {
+		db.UpdateRepositoryDefault(&db.CreateRepoOptionsLegacy{Name: f.RepoName,
+			Description: f.Description,
+			Gitignores:  f.Gitignores,
+			License:     f.License,
+			Readme:      f.Readme,
+			IsPrivate:   f.Private || conf.Repository.ForcePrivate,
+			IsUnlisted:  f.Unlisted,
+			AutoInit:    f.AutoInit})
+	}
+
 	handleCreateError(c, ctxUser, err, "CreatePost", CREATE, &f)
 }
 

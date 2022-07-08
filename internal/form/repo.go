@@ -25,15 +25,16 @@ import (
 //         \/        \/                   \/        \/                        \/       \/ \/
 
 type CreateRepo struct {
-	UserID      int64  `binding:"Required"`
-	RepoName    string `binding:"Required;AlphaDashDot;MaxSize(100)"`
-	Private     bool
-	Unlisted    bool
-	Description string `binding:"MaxSize(512)"`
-	AutoInit    bool
-	Gitignores  string
-	License     string
-	Readme      string
+	UserID          int64  `binding:"Required"`
+	RepoName        string `binding:"Required;AlphaDashDot;MaxSize(100)"`
+	Private         bool
+	Unlisted        bool
+	Description     string `binding:"MaxSize(512)"`
+	AutoInit        bool
+	SaveDefaultRepo bool
+	Gitignores      string
+	License         string
+	Readme          string
 }
 
 func (f *CreateRepo) Validate(ctx *macaron.Context, errs binding.Errors) binding.Errors {
